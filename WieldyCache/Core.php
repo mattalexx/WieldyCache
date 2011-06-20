@@ -4,11 +4,11 @@ WieldyCache_Core::loadLibrary('Exception');
 
 class WieldyCache_Core
 {
-    protected static $instance;
-    public $libDir;
-    public $engine;
-    public $readEnabled = true;
-    public $writeEnabled = true;
+	protected static $instance;
+	public $libDir;
+	public $engine;
+	public $readEnabled = true;
+	public $writeEnabled = true;
 
 	private function __construct()
 	{
@@ -42,13 +42,13 @@ class WieldyCache_Core
 		require_once $self->libDir.'/WieldyCache/'.$name.'.php';
 	}
 
-    public static function getInstance()
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
+	public static function getInstance()
+	{
+		if (!isset(self::$instance)) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
 	
 	public static function read($key)
 	{

@@ -52,9 +52,8 @@ class WieldyCache_File_Engine extends WieldyCache_Engine
 	{
 		$file = $this->getPathByKey($key);
 		if (is_file($file)) {
-            if (!unlink($file)) {
+            if (!unlink($file))
                 throw new Exception('Cache file not deleted: '.$file);
-            }
 		}
 	}
 	
@@ -63,9 +62,8 @@ class WieldyCache_File_Engine extends WieldyCache_Engine
 		$cleanKey = $key;
 		$cleanKey = strtolower($cleanKey);
 		$cleanKey = preg_replace('/[^a-z0-9]/', '_', $cleanKey);
-		while (strpos($cleanKey, '__') !== false) {
+		while (strpos($cleanKey, '__') !== false)
 			$cleanKey = str_replace('__', '_', $cleanKey);
-		}
 		$cleanKey = trim($cleanKey, '_');
 		return $this->dir.'/'.$cleanKey.'_'.md5($key);
     }
