@@ -59,6 +59,9 @@ class WieldyCache_File_Engine extends WieldyCache_Engine
 	
     private function getPathByKey($key)
 	{
+		if (is_array($key))
+			$key = implode('_', $key);
+
 		$cleanKey = $key;
 		$cleanKey = strtolower($cleanKey);
 		$cleanKey = preg_replace('/[^a-z0-9]/', '_', $cleanKey);
