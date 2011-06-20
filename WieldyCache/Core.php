@@ -59,12 +59,31 @@ class WieldyCache_Core
 		return $self->engine->read($key);
 	}
 	
-	public static function cacheOrCall($cacheKey, $expires, $function, $params = array())
+	public static function cacheOrCall($expires, $cacheKey = null)
 	{
-		if (is_null($data = WieldyCache::read($cacheKey))) {
-			$data = call_user_func_array($function, (array) $params);
+		if (isset($GLOBALS['cacheOrCallIsCalling']))
+			return null;
+
+		$debugBacktrace = debug_backtrace();
+		$backtrace = $debugBacktrace[1];
+
+		if (!$cacheKey)
+			$cacheKey = array($backtrace['class'], $backtrace['function']);
+		$data = WieldyCache::read($cacheKey);
+		if (is_null($data)) {
+			$GLOBALS['cacheOrCallIsCalling'] = true;
+			$data = self::callFromBacktrace($backtrace);
+			unset($GLOBALS['cacheOrCallIsCalling']);
 			WieldyCache::write($cacheKey, $data, $expires);
 		}
+		return $data;
+	}
+	
+	public static function callFromBacktrace($backtrace)
+	{
+		$function = array($backtrace['object'], $backtrace['function']);
+		$args = $backtrace['args'];
+		$data = call_user_func_array($function, $args);
 		return $data;
 	}
 	
@@ -107,10 +126,8 @@ class WieldyCache_Core
  * This is here to easily disable a cache call during development
  *
  */
-	public static function cacheOrCalld($cacheKey, $expires, $function, $params = array())
+	public static function cacheOrCalld($expires, $cacheKey = null)
 	{
-		$data = call_user_func_array($function, (array) $params);
-		WieldyCache::write($cacheKey, $data, $expires);
-		return $data;
+		return null;
 	}
 }
