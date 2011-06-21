@@ -70,7 +70,8 @@ class WieldyCache_Core
 		if (!is_numeric($expires))
 			$expires = 60*60*12;
 		if (!$cacheKey)
-			$cacheKey = array($backtrace['class'], $backtrace['function']);
+			$cacheKey = array('methodcache_'.$backtrace['class'], $backtrace['function']);
+
 		$data = WieldyCache::read($cacheKey);
 		if (is_null($data)) {
 			$GLOBALS['methodCacheCalling'] = true;
