@@ -120,7 +120,7 @@ class WieldyCache_Core
  * This is here to easily disable a cache call during development
  *
  */
-	public static function readd($key)
+	public static function read_($key)
 	{
 		return null;
 	}
