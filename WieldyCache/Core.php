@@ -61,9 +61,6 @@ class WieldyCache_Core
 	
 	public static function methodCache($expires = null, $cacheKey = null)
 	{
-		if (isset($GLOBALS['methodCacheCalling']))
-			return null;
-
 		$debugBacktrace = debug_backtrace();
 		$backtrace = $debugBacktrace[1];
 
@@ -72,11 +69,16 @@ class WieldyCache_Core
 		if (!$cacheKey)
 			$cacheKey = array('methodcache_'.$backtrace['class'], $backtrace['function']);
 
+		$flag = 'methodCacheCalling_'.md5(var_export($cacheKey, true));
+
+		if (isset($GLOBALS[$flag]))
+			return null;
+
 		$data = WieldyCache::read($cacheKey);
 		if (is_null($data)) {
-			$GLOBALS['methodCacheCalling'] = true;
+			$GLOBALS[$flag] = true;
 			$data = self::callFromBacktrace($backtrace);
-			unset($GLOBALS['methodCacheCalling']);
+			unset($GLOBALS[$flag]);
 			WieldyCache::write($cacheKey, $data, $expires);
 		}
 		return $data;
