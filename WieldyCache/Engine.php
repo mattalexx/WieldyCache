@@ -4,7 +4,5 @@ class WieldyCache_Engine
 {
 	public $defaultExpire = 3600;
 
-	public function __construct($params)
-	{
-	}
+	public function __construct($params) {}
 }

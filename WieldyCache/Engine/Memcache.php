@@ -11,23 +11,19 @@ class WieldyCache_Memcache_Engine extends WieldyCache_Engine
 
 	public function __construct($params)
 	{
-		if (!class_exists('Memcache')) {
+		if (!class_exists('Memcache'))
 			throw new WieldyCache_Exception('Memcache not available. Is it installed?');
-		}
 		foreach (array('host', 'port', 'persistent') as $key) {
-			if (isset($params[$key])) {
+			if (isset($params[$key]))
 				$this->$key = $params[$key];
-			}
 		}
         $this->memcache = new Memcache;
-		if ($this->persistent) {
+		if ($this->persistent)
 			$connection = $this->memcache->pconnect($this->host, $this->port);
-		} else {
+		else
 			$connection = $this->memcache->connect($this->host, $this->port);
-		}
-		if (!$connection) {
+		if (!$connection)
 			throw new Exception('Failed to connect to memcached server');
-		}
 	}
 
     public function read($key)
@@ -39,9 +35,8 @@ class WieldyCache_Memcache_Engine extends WieldyCache_Engine
 
 	public function write($key, $data, $expire = null)
 	{
-		if (!is_numeric($expire)) {
+		if (!is_numeric($expire))
 			$expire = $this->defaultExpire;
-		}
 		
 		$cacheKey = $this->getCacheKey($key);
 		
@@ -51,15 +46,15 @@ class WieldyCache_Memcache_Engine extends WieldyCache_Engine
 		$dataPass = $data;
 		unset($dataPassPre);
 		
-		// Compression must be on for memcached 5.2.5 (PECL Bug: http://pecl.php.net/bugs/bug.php?id=14044)
+		// Compression must be on for memcached 5.2.5
+		// (PECL Bug: http://pecl.php.net/bugs/bug.php?id=14044)
 		$this->memcache->set($cacheKey, $dataPass, MEMCACHE_COMPRESSED, time() + $expire);
 	}
 
 	public function getCacheKey($key)
 	{
-		if (!is_array($key)) {
+		if (!is_array($key))
 			return $key;
-		}
 		$namespaceId = $this->getNamespaceId($key[0]);
 		$cacheKey = $key[1].'_'.$namespaceId;
 		return $cacheKey;

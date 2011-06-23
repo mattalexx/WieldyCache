@@ -27,9 +27,8 @@ class WieldyCache_Core
 
 	public function setEngine($engine, $params = null)
 	{
-		if (!in_array($engine, array('Memcache', 'File'))) {
+		if (!in_array($engine, array('Memcache', 'File')))
 			throw new WieldyCache_Exception('Invalid engine type: '.$engine);
-		}
 		self::loadLibrary('Engine/'.$engine);
 		$self = self::getInstance();
 		$className = 'WieldyCache_'.$engine.'_Engine';
@@ -44,18 +43,16 @@ class WieldyCache_Core
 
 	public static function getInstance()
 	{
-		if (!isset(self::$instance)) {
+		if (!isset(self::$instance))
 			self::$instance = new self();
-		}
 		return self::$instance;
 	}
 	
 	public static function read($key)
 	{
 		$self = self::getInstance();
-		if (!$self->readEnabled) {
+		if (!$self->readEnabled)
 			return null;
-		}
 		return $self->engine->read($key);
 	}
 	
@@ -95,18 +92,16 @@ class WieldyCache_Core
 	public static function write($key, $data, $expire = null)
 	{
 		$self = self::getInstance();
-		if (!$self->writeEnabled) {
+		if (!$self->writeEnabled)
 			return null;
-		}
 		return $self->engine->write($key, $data, $expire);
 	}
 	
 	public static function remove($key = null)
 	{
 		$self = self::getInstance();
-		if (!is_null($key)) {
+		if (!is_null($key))
 			return $self->engine->remove($key);
-		}
 		return $self->engine->removeAll();
 	}
 	
