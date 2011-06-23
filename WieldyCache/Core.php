@@ -50,6 +50,10 @@ class WieldyCache_Core
 	
 	public static function read($key)
 	{
+		// Pass false into the first param to disable temporarily
+		if ($key === false)
+			return null;
+
 		$self = self::getInstance();
 		if (!$self->readEnabled)
 			return null;
@@ -58,6 +62,10 @@ class WieldyCache_Core
 	
 	public static function methodCache($expires = null, $cacheKey = null)
 	{
+		// Pass false into the first param to disable temporarily
+		if ($expires === false)
+			return null;
+
 		$debugBacktrace = debug_backtrace();
 		$backtrace = $debugBacktrace[1];
 
@@ -112,22 +120,4 @@ class WieldyCache_Core
 	}
 
 	private function __clone() {}
-	
-/**
- * This is here to easily disable a cache call during development
- *
- */
-	public static function read_($key)
-	{
-		return null;
-	}
-	
-/**
- * This is here to easily disable a cache call during development
- *
- */
-	public static function methodCache_($expires = null, $cacheKey = null)
-	{
-		return null;
-	}
 }
