@@ -48,15 +48,6 @@ class WieldyCache_File_Engine extends WieldyCache_Engine
 		fclose($fh);
 	}
 
-	public function remove($key)
-	{
-		$file = $this->getPathByKey($key);
-		if (is_file($file)) {
-            if (!unlink($file))
-                throw new Exception('Cache file not deleted: '.$file);
-		}
-	}
-	
     private function getPathByKey($key)
 	{
 		if (is_array($key))
@@ -68,6 +59,23 @@ class WieldyCache_File_Engine extends WieldyCache_Engine
 		while (strpos($cleanKey, '__') !== false)
 			$cleanKey = str_replace('__', '_', $cleanKey);
 		$cleanKey = trim($cleanKey, '_');
+		$cleanKey = 'wc_'.$cleanKey;
 		return $this->dir.'/'.$cleanKey.'_'.md5($key);
     }
+
+	public function remove($key)
+	{
+		$file = $this->getPathByKey($key);
+		if (is_file($file)) {
+            if (!unlink($file))
+                throw new Exception('Cache file not deleted: '.$file);
+		}
+	}
+	
+	public function removeAll()
+	{
+		$files = glob($this->dir.'/wc_*');
+		foreach ($files as $file)
+			unlink($file);
+	}
 }
