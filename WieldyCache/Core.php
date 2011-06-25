@@ -71,8 +71,13 @@ class WieldyCache_Core
 
 		if (!is_numeric($expires))
 			$expires = 60*60*12;
-		if (!$cacheKey)
+		if (!$cacheKey) {
 			$cacheKey = array('methodcache_'.$backtrace['class'], $backtrace['function']);
+			if ($backtrace['args']) {
+				$hash = md5(var_export($backtrace['args'], true));
+				$cacheKey[1] .= '_'.count($backtrace['args']).'args'.$hash;
+			}
+		}
 
 		$flag = 'methodCacheCalling_'.md5(var_export($cacheKey, true));
 
