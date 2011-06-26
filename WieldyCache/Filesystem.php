@@ -1,6 +1,6 @@
 <?php
 
-class WieldyCache_Filesystem 
+class WieldyCache_Filesystem
 {
 	function checkReadWriteAll($fs_node)
 	{
@@ -9,7 +9,7 @@ class WieldyCache_Filesystem
 		$isWritable = (substr(sprintf('%o', fileperms($fs_node)), -4) === '0777');
 		return ($isReadable && $isWritable);
 	}
-	
+
 	function makeReadWriteAll($fs_node)
 	{
 		if (self::checkReadWriteAll($fs_node))
@@ -17,8 +17,8 @@ class WieldyCache_Filesystem
 		@chmod($fs_node, 0777);
 		return self::checkReadWriteAll($fs_node);
 	}
-	
-	function createDirectory($directory, $safe_dir) 
+
+	function createDirectory($directory, $safe_dir)
 	{
 		// Parse offset directory (only sub nodes of the safe dir will be altered)
 		if (strpos($directory, $safe_dir) !== 0)
@@ -47,56 +47,56 @@ class WieldyCache_Filesystem
 		}
 		return true;
 	}
-	
-	function directoryExists($directory) 
+
+	function directoryExists($directory)
 	{
 		return is_dir($directory);
 	}
-	
+
 	function checkDirectory($directory)
 	{
 		return (is_dir($directory) && self::checkReadWriteAll($directory));
 	}
-	
-	function remove($dirname) 
+
+	function remove($dirname)
 	{
 		// Sanity check
 		if (!file_exists($dirname))
 			return false;
-		
-	    // Simple delete for a file
+
+		// Simple delete for a file
 		if (is_file($dirname) || is_link($dirname))
 			return unlink($dirname);
-		
+
 		// Loop through the folder
 		$dir = dir($dirname);
 		while (false !== $entry = $dir->read()) {
-			
+
 			// Skip pointers
 			if ($entry == '.' || $entry == '..')
 				continue;
-		
+
 			// Recurse
 			self::remove($dirname.'/'.$entry);
 		}
-		
+
 		// Clean up
 		$dir->close();
 		return rmdir($dirname);
 	}
-	
+
 	function emptyDirectory($dirname)
 	{
 		// Sanity check
 		if (!file_exists($dirname))
 			return false;
-		
+
 		// Remove each node within
 		$globString = rtrim($dirname, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'*';
 		foreach (glob($globString) as $file) {
 			self::remove($file);
-		
-		// For all we know
-		return true;
+
+			// For all we know
+			return true;
+		}
 	}
-}
