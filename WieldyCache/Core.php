@@ -60,7 +60,8 @@ class WieldyCache_Core
 		return $self->engine->read($key);
 	}
 	
-	public static function methodCache($expires = null, $cacheKey = null)
+	public static function methodCache($expires = null,
+			$extraCacheKeyParameters = null)
 	{
 		// Pass false into the first param to disable temporarily
 		if ($expires === false)
@@ -70,13 +71,17 @@ class WieldyCache_Core
 		$backtrace = $debugBacktrace[1];
 
 		if (!is_numeric($expires))
-			$expires = 60*60*12;
-		if (!$cacheKey) {
-			$cacheKey = array('methodcache_'.$backtrace['class'], $backtrace['function']);
-			if ($backtrace['args']) {
-				$hash = md5(var_export($backtrace['args'], true));
-				$cacheKey[1] .= '_'.count($backtrace['args']).'args'.$hash;
-			}
+			$expires = 60*60*12; // 12 hours
+
+		$cacheKey = array('methodcache_'.$backtrace['class'], $backtrace['function']);
+		if ($backtrace['args']) {
+			$hash = md5(var_export($backtrace['args'], true));
+			$cacheKey[1] .= '_'.count($backtrace['args']).'args'.$hash;
+		}
+		if (!empty($extraCacheKeyParameters)) {
+			if (is_array($extraCacheKeyParameters))
+				$extraCacheKeyParameters = implode('|', $extraCacheKeyParameters);
+			$cacheKey[1] .= '_'.md5($extraCacheKeyParameters);
 		}
 
 		$flag = 'methodCacheCalling_'.md5(var_export($cacheKey, true));
