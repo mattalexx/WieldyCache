@@ -92,7 +92,13 @@ class WieldyCache_Core
 		$data = WieldyCache::read($cacheKey);
 		if (is_null($data)) {
 			$GLOBALS[$flag] = true;
+			$startTime = microtime(true);
 			$data = self::callFromBacktrace($backtrace);
+			$totalTime = microtime(true) - $startTime;
+			if (false) {
+				print 'CACHETIME ('.$backtrace['class'].'::'.$backtrace['function']
+					.'): '.$totalTime.'<br />'."\n";
+			}
 			unset($GLOBALS[$flag]);
 			WieldyCache::write($cacheKey, $data, $expires);
 		}
